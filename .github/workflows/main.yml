@@ -1,0 +1,18 @@
+name: CI Iniciante         # Nome do workflow
+
+on: [push]                 # Evento: Dispara toda vez que houver um push
+
+jobs:
+  build:                   # Nome do Job
+    runs-on: ubuntu-latest # O sistema operacional da máquina virtual
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4 # Action pronta que "baixa" seu código na VM
+
+      - name: Rodar um script
+        run: echo "O workflow rodou com sucesso!"
+
+      - name: Mostrar o conteudo da pagina
+        run: cat index.html
+
