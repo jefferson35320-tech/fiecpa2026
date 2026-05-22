@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build da Imagem Docker
-        run: docker build -t aulagha .
+        run: docker build -t fiecpa2026 .
 
       - name: Tag e Push da Imagem
         run: |
