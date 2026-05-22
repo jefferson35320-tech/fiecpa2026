@@ -35,7 +35,7 @@ jobs:
 
       - name: Tag e Push da Imagem
         run: |
-          docker tag aulagha ${{ secrets.DOCKER_USERNAME }}/fiecpa2026:latest
+          docker tag fiecpa2026 ${{ secrets.DOCKER_USERNAME }}/fiecpa2026:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/fiecpa2026:latest
 
   # Job 3: Rodando na AWS
