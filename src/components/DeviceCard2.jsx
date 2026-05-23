@@ -1,12 +1,12 @@
-import { DEVICE_TYPES, deviceMetadata } from '../types/deviceTypes';
+import { DEVICE_TYPES, deviceMetadataV2 } from '../types/deviceTypes';
 import SensorReadOnly from './SensorReadOnly';
 import SwitchControl from './SwitchControl';
 
 export default function DeviceCard2({ device, onToggle, onDelete }) {
-  const { id, type, porta } = device;
-  const meta = deviceMetadata[type];
+  const { id, tipo, porta } = device;
+  const meta = deviceMetadataV2[tipo];
 
-  if (type === DEVICE_TYPES.SENSOR) {
+  if (tipo === DEVICE_TYPES.SENSOR) {
     return <SensorReadOnly device={device} onDelete={onDelete} />;
   }
 

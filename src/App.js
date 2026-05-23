@@ -5,6 +5,7 @@ import Login from './components/login.jsx';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import store from './store/store.js';
+import Dashboard2 from './components/Dashboard2.jsx';
 
 function PrivateRoute({ children }) {
   const { user } = store();
@@ -21,6 +22,14 @@ function AppRoutes() {
         element={
           <PrivateRoute>
             <Dashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/dashboardV2"
+        element={
+          <PrivateRoute>
+            <Dashboard2 />
           </PrivateRoute>
         }
       />

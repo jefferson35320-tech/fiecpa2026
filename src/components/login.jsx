@@ -28,7 +28,7 @@ export default function Login() {
       console.log("=========")
       console.log(token)
       setUser(token)
-      navigate('/dashboard');
+      navigate('/dashboardV2');
     } catch (err) {
       setError(err.message);
     } finally {

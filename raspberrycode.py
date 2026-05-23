@@ -13,7 +13,7 @@ GAIN = 1
 
 # URLs da API
 GET_URL = "https://wr09fdpz61.execute-api.us-east-2.amazonaws.com/devices/"
-PUT_URL_TEMPLATE = "https://wr09fdpz61.execute-api.us-east-2.amazonaws.com/{id}"
+PUT_URL_TEMPLATE = "https://wr09fdpz61.execute-api.us-east-2.amazonaws.com/devices/{id}"
 
 # Dicionário para guardar a configuração atual de cada pino
 pin_configurations = {}

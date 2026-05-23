@@ -10,9 +10,18 @@ export const registerDevice = async (tipo, porta, userId) => {
 
 export const getDevices = async () => {
   const res = await api.get("/devices/")
-  console.log(res.data.dispostivos)
-  const token = res.data.token;
-  return token;
+  console.log(res.data.dispositivos)
+  return res.data.dispositivos;
+};
+
+export const updateDevice = async (device, id) => {
+  const res = await api.put("/devices/"+id,{tipo: device.tipo, porta: device.porta, valor: device.valor})
+  return res.data;
+};
+
+export const deleteDevice = async (id) => {
+  const res = await api.delete("/devices/"+id)
+  return res.data;
 };
 
 export const logoutUser = () => {

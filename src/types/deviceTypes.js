@@ -30,3 +30,23 @@ export const deviceMetadata = {
     isSensor: false,
   },
 };
+
+// Metadados para cada tipo (usados na UI)
+export const deviceMetadataV2 = {
+   [DEVICE_TYPES.LED]: {
+    name: 'LED',
+    icon: '🔆',
+    hasOnOff: true,
+    canToggle: true,     // pode ser ligado/desligado via interruptor
+    isSensor: false,
+  },
+  [DEVICE_TYPES.SENSOR]: {
+    name: 'Sensor',
+    icon: '📡',
+    hasOnOff: false,     // sensores são apenas leitura, não se liga/desliga
+    canToggle: false,
+    isSensor: true,
+    // Possíveis propriedades: tipoSensor (presença, luminosidade, temperatura)
+  }
+ 
+};
