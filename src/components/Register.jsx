@@ -1,14 +1,12 @@
 // src/components/Register.jsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { registerUser } from '../utils/authService';
 
 export default function Register() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '', url_imagem:""});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {

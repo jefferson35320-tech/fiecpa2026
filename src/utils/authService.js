@@ -1,17 +1,8 @@
-import { jwtDecode } from "jwt-decode";
 import api from "./axios";
 
 // src/utils/authService.js
 const USERS_KEY = 'smart_home_users';
 
-const getUsers = () => {
-  const users = localStorage.getItem(USERS_KEY);
-  return users ? JSON.parse(users) : [];
-};
-
-const saveUsers = (users) => {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-};
 
 export const registerUser = async (nome, email, password, url_imagem) => {
   const res = await api.post("/users/cadastro",{nome, email, password, url_imagem})

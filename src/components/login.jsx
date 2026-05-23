@@ -1,7 +1,6 @@
 // src/components/Login.jsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import store from '../store/store';
 import { loginUser } from '../utils/authService';
 

@@ -1,10 +1,9 @@
 // src/App.js
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/login.jsx';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
-import { useStore } from 'zustand';
 import store from './store/store.js';
 
 function PrivateRoute({ children }) {
