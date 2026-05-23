@@ -1,3 +1,6 @@
+import { jwtDecode } from "jwt-decode";
+import api from "./axios";
+
 // src/utils/authService.js
 const USERS_KEY = 'smart_home_users';
 
@@ -10,25 +13,16 @@ const saveUsers = (users) => {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 };
 
-export const registerUser = (name, email, password) => {
-  const users = getUsers();
-  if (users.find(u => u.email === email)) {
-    throw new Error('E-mail já cadastrado');
-  }
-  const newUser = { id: Date.now(), name, email, password };
-  users.push(newUser);
-  saveUsers(users);
-  return { id: newUser.id, name, email };
+export const registerUser = async (nome, email, password, url_imagem) => {
+  const res = await api.post("/users/cadastro",{nome, email, password, url_imagem})
+  return res.data;
 };
 
-export const loginUser = (email, password) => {
-  const users = getUsers();
-  const user = users.find(u => u.email === email && u.password === password);
-  if (!user) {
-    throw new Error('E-mail ou senha inválidos');
-  }
-  sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name, email: user.email }));
-  return { id: user.id, name: user.name, email: user.email };
+export const loginUser = async (email, password) => {
+  const res = await api.post("/users/login",{email, password})
+  console.log(res.data.token)
+  const token = res.data.token;
+  return token;
 };
 
 export const logoutUser = () => {
