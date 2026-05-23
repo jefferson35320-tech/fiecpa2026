@@ -1,6 +1,6 @@
 import { DEVICE_TYPES, deviceMetadataV2 } from '../types/deviceTypes';
 import SensorReadOnly from './SensorReadOnly';
-import SwitchControl from './SwitchControl';
+import SwitchControlV2 from './SwitchControlV2';
 
 export default function DeviceCard2({ device, onToggle, onDelete }) {
   const { id, tipo, porta } = device;
@@ -21,7 +21,7 @@ export default function DeviceCard2({ device, onToggle, onDelete }) {
           
         </div>
         <div className="flex gap-2">
-          <SwitchControl device={device} onToggle={onToggle} />
+          <SwitchControlV2 device={device} onToggle={onToggle} />
           <button
             onClick={() => onDelete(id)}
             className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md"
