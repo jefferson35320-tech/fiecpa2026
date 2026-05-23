@@ -1,6 +1,6 @@
 # Execute as service in pi
 
-sudo cp /etc/systemd/system/fiecpa2026.service
+sudo cp fiecpa2026.service /etc/systemd/system/fiecpa2026.service
 
 # Getting Started with Create React App
 
