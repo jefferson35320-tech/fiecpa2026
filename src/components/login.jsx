@@ -35,7 +35,7 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Faça login</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Faça login no Fiec Portas Abertas</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">E-mail</label>
