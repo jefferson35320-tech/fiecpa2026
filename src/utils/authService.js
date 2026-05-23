@@ -1,7 +1,6 @@
 import api from "./axios";
 
 // src/utils/authService.js
-const USERS_KEY = 'smart_home_users';
 
 
 export const registerUser = async (nome, email, password, url_imagem) => {
