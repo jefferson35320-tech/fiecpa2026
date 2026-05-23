@@ -1,3 +1,7 @@
+# Execute as service in pi
+
+sudo cp fiecpa2026.service /etc/systemd/system/fiecpa2026.service
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

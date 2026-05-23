@@ -1,0 +1,16 @@
+[Unit]
+Description=Fiec PA 2026 Service
+After=network.target
+
+[Service]
+# User to run the script (avoid using root for security)
+User=pi
+WorkingDirectory=/home/pi/fiecpa2026
+ExecStart=/usr/bin/python3 /home/pi/fiecpa2026/raspberrycode.py
+
+Restart=always
+# Optional: environment variables or virtual env path
+# Environment="PATH=/path/to/your/venv/bin"
+
+[Install]
+WantedBy=multi-user.target
