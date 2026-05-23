@@ -1,60 +1,50 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getDevices, addDevice, toggleDevice, deleteDevice, updateSensorValue } from '../utils/deviceApi';
-import DeviceCard from './DeviceCard';
-import AddDeviceForm from './AddDeviceForm';
 import store from '../store/store';
+import { addDeviceV2, deleteDeviceV2, getDevicesV2, toggleDeviceV2 } from '../utils/deviceApv2';
+import DeviceCard2 from './DeviceCard2';
+import AddDeviceFormV2 from './AddDeviceFormV2';
 
-export default function Dashboard() {
+export default function Dashboard2() {
   const { user, resetUser } = store();
   const navigate = useNavigate();
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Carregar dispositivos
-  useEffect(() => {
-    getDevices().then(data => {
+  const getDevices = () => {
+    getDevicesV2().then(data => {
       setDevices(data);
       setLoading(false);
     });
+  }
+
+  // Carregar dispositivos
+  useEffect(() => {
+    getDevices()
   }, []);
 
   // Simular atualização periódica dos sensores (exemplo)
   useEffect(() => {
     const interval = setInterval(() => {
-      devices.forEach(device => {
-        if (device.type === 'sensor' && device.sensorType === 'presence') {
-          // Alterna presença aleatoriamente para demonstração
-          const newValue = Math.random() > 0.7 ? 'detectado' : 'vazio';
-          updateSensorValue(device.id, newValue).then(updated => {
-            if (updated) {
-              setDevices(prev => prev.map(d => d.id === updated.id ? updated : d));
-            }
-          });
-        } else if (device.type === 'sensor' && device.sensorType === 'luminosity') {
-          const newLux = Math.floor(Math.random() * 500);
-          updateSensorValue(device.id, newLux).then(updated => {
-            if (updated) setDevices(prev => prev.map(d => d.id === updated.id ? updated : d));
-          });
-        }
-      });
+      getDevices()
     }, 5000); // a cada 5 segundos
     return () => clearInterval(interval);
   }, [devices]);
 
   const handleAdd = async (deviceData) => {
-    const novo = await addDevice(deviceData);
-    setDevices(prev => [...prev, novo]);
+    await addDeviceV2(deviceData);
+    await getDevices();
   };
 
   const handleToggle = async (id) => {
-    const atualizado = await toggleDevice(id);
-    setDevices(prev => prev.map(d => d.id === id ? atualizado : d));
+     const device = devices.find(d => d.id === id);
+     await toggleDeviceV2(device, id);
+     await getDevices();
   };
 
   const handleDelete = async (id) => {
-    await deleteDevice(id);
-    setDevices(prev => prev.filter(d => d.id !== id));
+    await deleteDeviceV2(id);
+    await getDevices();
   };
 
   const handleLogout = () => {
@@ -89,11 +79,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <AddDeviceForm onAdd={handleAdd} />
+        <AddDeviceFormV2 onAdd={handleAdd} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           {devices.map(device => (
-            <DeviceCard
+            <DeviceCard2
               key={device.id}
               device={device}
               onToggle={handleToggle}
