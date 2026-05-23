@@ -8,15 +8,14 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 # Inicializa o conversor ADC (ADS1115 ou ADS1116)
-# Por padrão, assume o endereço I2C 0x48
 adc = Adafruit_ADS1x15.ADS1115()
-GAIN = 1  # Ganho de +/-4.096V (pode ser ajustado conforme a sua necessidade)
+GAIN = 1  
 
 # URLs da API
 GET_URL = "https://wr09fdpz61.execute-api.us-east-2.amazonaws.com/devices/"
 PUT_URL_TEMPLATE = "https://wr09fdpz61.execute-api.us-east-2.amazonaws.com/{id}"
 
-# Dicionário para guardar a configuração atual de cada pino e evitar reconfigurações redundantes
+# Dicionário para guardar a configuração atual de cada pino
 pin_configurations = {}
 
 def configurar_gpio(porta, tipo):
@@ -30,17 +29,20 @@ def configurar_gpio(porta, tipo):
             print(f"[GPIO] Porta {porta} configurada como INPUT (SENSOR)")
         pin_configurations[porta] = tipo
 
-def ler_valor_porta(porta, tipo):
-    """Lê o valor físico baseado no tipo de dispositivo."""
+def atualizar_e_ler_porta(porta, tipo, valor_recebido):
+    """Aplica o valor recebido (se for LED) ou lê o ADC (se for SENSOR)."""
     if tipo == 'led':
-        # Retorna o estado atual da saída (0 ou 1)
-        return GPIO.input(porta)
+        # Garante que o valor seja 0 (LOW) ou 1 (HIGH)
+        estado_led = GPIO.HIGH if int(valor_recebido) >= 1 else GPIO.LOW
+        GPIO.output(porta, estado_led)
+        print(f"[GPIO] LED na porta {porta} definido para: {valor_recebido}")
+        return int(valor_recebido)
+        
     elif tipo == 'sensor':
-        # Como a especificação pede leitura vinda do ADC, mapeamos a porta do GPIO para o canal do ADC.
-        # Exemplo: Porta GPIO X lê o canal (porta % 4) do ADC (canais de 0 a 3)
+        # Mapeia a porta GPIO para o canal do ADC (0 a 3)
         canal_adc = porta % 4
         try:
-            # Lê o valor analógico bruto do canal correspondente
+            # Lê o valor analógico atual do sensor
             valor_analogico = adc.read_adc(canal_adc, gain=GAIN)
             return valor_analogico
         except Exception as e:
@@ -70,29 +72,27 @@ try:
     print("Iniciando monitoramento de dispositivos...")
     while True:
         try:
-            # 1. Faz o GET para buscar as configurações dos dispositivos
+            # 1. Faz o GET para buscar as configurações e valores dos dispositivos
             response = requests.get(GET_URL)
             
             if response.status_code == 200:
                 dados = response.json()
-                
-                # Supondo que a API retorna uma lista sob a chave 'dispositivos' (conforme seu código anterior)
                 dispositivos = dados.get('dispositivos', [])
                 
-                # Se a API retornar uma lista direta no body, use: dispositivos = dados
                 for dev in dispositivos:
                     device_id = dev.get('id')
-                    tipo = dev.get('tipo').lower() # Garante tratamento em caixa baixa ('led' ou 'sensor')
+                    tipo = dev.get('tipo', '').lower()
                     porta = int(dev.get('porta'))
+                    valor_api = dev.get('valor', 0) # Pega o campo 'valor' vindo da API (padrão 0 se não existir)
                     
-                    # 2. Configura a GPIO dinamicamente
+                    # 2. Configura a GPIO dinamicamente (INPUT ou OUTPUT)
                     configurar_gpio(porta, tipo)
                     
-                    # 3. Lê o valor atual do pino (Digital ou Analógico via ADC)
-                    valor_atual = ler_valor_porta(porta, tipo)
+                    # 3. Se for LED, aciona a porta com o valor do GET. Se for SENSOR, lê o ADC.
+                    valor_final = atualizar_e_ler_porta(porta, tipo, valor_api)
                     
                     # 4. Envia o estado de volta para a API (PUT)
-                    enviar_estado(device_id, tipo, porta, valor_atual)
+                    enviar_estado(device_id, tipo, porta, valor_final)
                     
             else:
                 print(f"[GET] Falha ao buscar dispositivos. Status: {response.status_code}")
@@ -106,5 +106,5 @@ try:
 except KeyboardInterrupt:
     print("\nEncerrando o programa de forma segura...")
 finally:
-    GPIO.cleanup() # Limpa as configurações de GPIO ao sair do programa
+    GPIO.cleanup()
     print("GPIO limpo com sucesso.")
