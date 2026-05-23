@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { registerUser } from '../utils/authService';
 
 export default function Register() {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '', url_imagem:""});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -17,7 +18,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword } = formData;
+    const { name, email, password, confirmPassword, url_imagem } = formData;
 
     if (!name || !email || !password) {
       setError('Preencha todos os campos');
@@ -34,7 +35,7 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await register(name, email, password);
+      await registerUser(name, email, password, url_imagem);
       navigate('/'); // volta para login após cadastro
     } catch (err) {
       setError(err.message);
@@ -90,6 +91,17 @@ export default function Register() {
               onChange={handleChange}
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Digite novamente"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Colocar endereço da imagem</label>
+            <input
+              type="text"
+              name="url_imagem"
+              value={formData.url_imagem}
+              onChange={handleChange}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Coloque o URL da imagem"
             />
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}

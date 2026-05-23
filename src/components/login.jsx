@@ -2,12 +2,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import store from '../store/store';
+import { loginUser } from '../utils/authService';
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { setUser } = store()
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -23,7 +25,10 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      await login(credentials.email, credentials.password);
+      const token=await loginUser(credentials.email, credentials.password);
+      console.log("=========")
+      console.log(token)
+      setUser(token)
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);

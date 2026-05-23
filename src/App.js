@@ -4,9 +4,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/login.jsx';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import { useStore } from 'zustand';
+import store from './store/store.js';
 
 function PrivateRoute({ children }) {
-  const { user } = useAuth();
+  const { user } = store();
   return user ? children : <Navigate to="/" />;
 }
 

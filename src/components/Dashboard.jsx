@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { getDevices, addDevice, toggleDevice, deleteDevice, updateSensorValue } from '../utils/deviceApi';
 import DeviceCard from './DeviceCard';
 import AddDeviceForm from './AddDeviceForm';
+import store from '../store/store';
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user, resetUser } = store();
   const navigate = useNavigate();
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +59,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    logout();
+    resetUser();
     navigate('/');
   };
 
@@ -70,6 +71,13 @@ export default function Dashboard() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Automação Residencial</h1>
           <div className="flex items-center gap-4">
+            <img
+                                    className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-500 ring-offset-2"
+                                    width={40}
+                                    height={40}
+                                    src={user.imagem}
+                                    alt={user.nome}
+                                />
             <span className="text-gray-600">Olá, {user?.email}</span>
             <button
               onClick={handleLogout}
