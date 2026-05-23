@@ -8,7 +8,8 @@ export const getDevicesV2 = async () => {
 }
 
 export const addDeviceV2 = async (deviceData) => {
-  await registerDevice(deviceData);
+  const { tipo, porta, userId} = deviceData;
+  await registerDevice(tipo, porta, userId);
   
 };
 

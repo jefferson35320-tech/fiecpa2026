@@ -79,7 +79,7 @@ export default function Dashboard2() {
           </div>
         </div>
 
-        <AddDeviceFormV2 onAdd={handleAdd} />
+        <AddDeviceFormV2 onAdd={handleAdd} userId={user.id} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           {devices.map(device => (

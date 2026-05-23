@@ -1,5 +1,5 @@
 import { DEVICE_TYPES, deviceMetadataV2 } from '../types/deviceTypes';
-import SensorReadOnly from './SensorReadOnly';
+import SensorReadOnlyV2 from './SensorReadOnlyV2';
 import SwitchControlV2 from './SwitchControlV2';
 
 export default function DeviceCard2({ device, onToggle, onDelete }) {
@@ -7,7 +7,7 @@ export default function DeviceCard2({ device, onToggle, onDelete }) {
   const meta = deviceMetadataV2[tipo];
 
   if (tipo === DEVICE_TYPES.SENSOR) {
-    return <SensorReadOnly device={device} onDelete={onDelete} />;
+    return <SensorReadOnlyV2 device={device} onDelete={onDelete} />;
   }
 
   // Lâmpada ou LED (possuem interruptor)
