@@ -7,8 +7,20 @@ import Adafruit_ADS1x15
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+import board
+import busio
+from adafruit_ads1x15.ads1115 import ADS1115
+from adafruit_ads1x15.analog_in import AnalogIn
+
+# Initialize I2C and the ADC
+i2c = busio.I2C(board.SCL, board.SDA)
+ads = ADS1115(i2c)
+
+# for 3.3V. If 5V uses gain as 2/3
+ads.gain = 1
+
 # Inicializa o conversor ADC (ADS1115 ou ADS1116)
-adc = Adafruit_ADS1x15.ADS1115()
+#adc = Adafruit_ADS1x15.ADS1115()
 GAIN = 1  
 
 # URLs da API
@@ -18,6 +30,18 @@ PUT_URL_TEMPLATE = "https://wr09fdpz61.execute-api.us-east-2.amazonaws.com/devic
 # Dicionário para guardar a configuração atual de cada pino
 pin_configurations = {}
 
+def map_voltage_to_range(voltage, in_min=0.0, in_max=3.3, out_min=0, out_max=1000):
+    # Constrain voltage to stay strictly between 0V and 3.3V (ignores minor sensor noise)
+    if voltage < in_min:
+        voltage = in_min
+    if voltage > in_max:
+        voltage = in_max
+        
+    # Scale 0-3.3V to 0-1000
+    scaled_val = ((voltage - in_min) / (in_max - in_min)) * (out_max - out_min) + out_min
+    
+    return int(scaled_val)
+
 def configurar_gpio(porta, tipo):
     """Configura o pino GPIO dinamicamente caso o tipo mude."""
     if porta not in pin_configurations or pin_configurations[porta] != tipo:
@@ -25,8 +49,9 @@ def configurar_gpio(porta, tipo):
             GPIO.setup(porta, GPIO.OUT)
             print(f"[GPIO] Porta {porta} configurada como OUTPUT (LED)")
         elif tipo == 'sensor':
-            GPIO.setup(porta, GPIO.IN)
-            print(f"[GPIO] Porta {porta} configurada como INPUT (SENSOR)")
+            
+            #GPIO.setup(porta, GPIO.IN)
+            print(f"[ADC] Porta {porta} configurada como INPUT (SENSOR)")
         pin_configurations[porta] = tipo
 
 def atualizar_e_ler_porta(porta, tipo, valor_recebido):
@@ -42,9 +67,13 @@ def atualizar_e_ler_porta(porta, tipo, valor_recebido):
         # Mapeia a porta GPIO para o canal do ADC (0 a 3)
         canal_adc = porta % 4
         try:
+            chan = AnalogIn(ads, canal_adc)
+            v = chan.voltage
+            scaled_value = map_voltage_to_range(v)
             # Lê o valor analógico atual do sensor
-            valor_analogico = adc.read_adc(canal_adc, gain=GAIN)
-            return valor_analogico
+            #valor_analogico = adc.read_adc(canal_adc, gain=GAIN)
+            #return valor_analogico
+            return scaled_value
         except Exception as e:
             print(f"[ADC] Erro ao ler o canal {canal_adc}: {e}")
             return 0
