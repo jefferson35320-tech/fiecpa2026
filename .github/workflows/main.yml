@@ -40,24 +40,26 @@ jobs:
 
   # Job 3: Rodando na AWS
   deploy-ec2:
-    runs-on: self-hosted
+    runs-on: [self-hosted, windows] # Especifica a tag do runner Windows
     needs: docker-build
+    if: github.event_name == 'push'
+    defaults:
+      run:
+        shell: powershell # Garante o uso do PowerShell nativo do Windows
     steps:
-      - name: Forçar Pull da imagem nova (ignora cache local)
-        # O comando pull garante que a imagem no host seja atualizada
-        run: docker pull ${{ secrets.DOCKER_USERNAME }}/fiecpa2026:latest
-
-      - name: Parar e remover container antigo
-        # Usamos || true para que o workflow não quebre se o container não existir
+      - name: Atualizar e Subir Container do Backend no Windows
         run: |
-          docker stop react-app || true
-          docker rm react-app || true
-
-      - name: Rodar novo container com flag de pull
-        run: |
-          docker run -d \
-            --pull always \
-            --name react-app \
-            -p 3000:3000\
-            ${{ secrets.DOCKER_USERNAME }}/fiecpa2026:latest
-
+          docker pull ${{ secrets.DOCKER_USERNAME }}/fieclab-backend:latest
+          
+          # Para e remove o container caso ele já exista (sem quebrar a pipeline se não existir)
+          if (docker ps -a --format '{{.Names}}' | Select-String "^fieclab-backend$") {
+              docker stop fieclab-backend
+              docker rm fieclab-backend
+          }
+          
+          # Sobe o novo container
+          docker run -d `
+            --name fieclab-backend `
+            --restart always `
+            -p 8080:8080 `
+            ${{ secrets.DOCKER_USERNAME }}/fieclab-backend:latest
